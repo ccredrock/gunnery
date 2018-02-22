@@ -48,14 +48,14 @@ class SSHTransport(Transport):
     def create_client(self):
         """ Create and configure SSHClient
         """
-        private = RSAKey(filename=self.get_private_key_file())
         client = SSHClient()
         client.set_missing_host_key_policy(AutoAddPolicy())
-        client.load_host_keys(self.get_host_keys_file())
         if self.server.authentication_method == self.server.OPENSSH_PASSWORD:
             client.connect(self.server.host, password=self.server.password,
                            look_for_keys=False, port=self.server.port, username=self.server.user)
         elif self.server.authentication_method == self.server.OPENSSH_CERTIFICATE:
+            private = RSAKey(filename=self.get_private_key_file())
+            client.load_host_keys(self.get_host_keys_file())
             client.connect(self.server.host, pkey=private,
                            look_for_keys=False, port=self.server.port, username=self.server.user)
         return client
